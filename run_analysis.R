@@ -2,20 +2,42 @@ library(dplyr)
 
 activtyLabelFilePath <- "~/data/UCI HAR Dataset/activity_labels.txt"
 featureFilePath <- "~/data/UCI HAR Dataset/features.txt"
-testXtestFilePath <- "~/data/UCI HAR Dataset/test/X_test.txt"
-testYtestFilePath <- "~/data/UCI HAR Dataset/test/Y_test.txt"
+testXFilePath <- "~/data/UCI HAR Dataset/test/X_test.txt"
+testYFilePath <- "~/data/UCI HAR Dataset/test/Y_test.txt"
 
+trainXFilePath <- "~/data/UCI HAR Dataset/train/X_train.txt"
+trainYFilePath <- "~/data/UCI HAR Dataset/train/Y_train.txt"
 
-activities <- read.csv(activtyLabelFilePath,header = FALSE, sep = " ")
-colnames(activities) <- c("id", "activity")
+getActivities <- function() {
+  activities <- read.csv(activtyLabelFilePath,header = FALSE, sep = " ")
+  colnames(activities) <- c("id", "activity")
+  return(activities)  
+}
 
-features <- read.csv(featureFilePath,header = FALSE, sep = " ")
-colnames(features) <- c("id", "feature")
+getFeatures <- function() {
+  features <- read.csv(featureFilePath,header = FALSE, sep = " ")
+  colnames(features) <- c("id", "feature")
+  return(features)  
+}
 
-textXtests <- read.table(testXtestFilePath)
-colnames(textXtests) <- features[,2]
+getTestData <- function() {
+  textXtests <- read.table(testXFilePath)
+  colnames(textXtests) <- getFeatures()[,2]
+  
+  testYdata <- read.table(testYFilePath)
+  colnames(testYdata) <- c("id")
+  
+  data.frame(c(right_join(testYdata,getActivities(), by = "id"),textXtests),stringsAsFactors=FALSE)
+}
 
-testYdata <- read.table(testYtestFilePath)
-colnames(testYdata) <- c("id")
+getTrainingData <- function() {
+  trainXtable <- read.table(trainXFilePath)
+  colnames(trainXtable) <- getFeatures()[,2]
+  
+  trainYdata <- read.table(trainYFilePath)
+  colnames(trainYdata) <- c("id")
+  
+  data.frame(c(right_join(trainYdata,getActivities(), by = "id"),trainXtable),stringsAsFactors=FALSE)
+}
 
-testData <- c(right_join(testYdata,activities),textXtests)
+allData <- rbind.data.frame(getTestData(),getTrainingData(),stringsAsFactors = FALSE)
