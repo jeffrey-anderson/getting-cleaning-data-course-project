@@ -1,43 +1,89 @@
 library(dplyr)
+library(tidyr)
 
+# File Paths
 activtyLabelFilePath <- "~/data/UCI HAR Dataset/activity_labels.txt"
 featureFilePath <- "~/data/UCI HAR Dataset/features.txt"
 testXFilePath <- "~/data/UCI HAR Dataset/test/X_test.txt"
 testYFilePath <- "~/data/UCI HAR Dataset/test/Y_test.txt"
+testSubjectFilePath <- "~/data/UCI HAR Dataset/test/subject_test.txt"
 
 trainXFilePath <- "~/data/UCI HAR Dataset/train/X_train.txt"
 trainYFilePath <- "~/data/UCI HAR Dataset/train/Y_train.txt"
+trainSubjectFilePath <- "~/data/UCI HAR Dataset/train/subject_train.txt"
 
-getActivities <- function() {
-  activities <- read.csv(activtyLabelFilePath,header = FALSE, sep = " ")
-  colnames(activities) <- c("id", "activity")
-  return(activities)  
+
+#' Get a data frame with activities
+#' @param activityLabelFile the path to the activity labels 
+#' @return A data fram representation of the \code{activityLabelFile} with two columns: \code{activity_id} and \code{activity}
+#'
+getActivityLabels <- function(activityLabelFile) {
+  activities <- read.csv(activityLabelFile,header = FALSE, sep = " ")
+  colnames(activities) <- c("activity_id", "activity")
+  return(activities)
 }
 
-getFeatures <- function() {
-  features <- read.csv(featureFilePath,header = FALSE, sep = " ")
+
+#' Get a data frame with features
+#' @param featureFile the path to the list of features 
+#' @return A data fram representation of the \code{featureFile} with two columns: \code{activity_id} and \code{activity}
+#'
+getFeatures <- function(featureFile) {
+  features <- read.csv(featureFile,header = FALSE, sep = " ", stringsAsFactors = FALSE)
   colnames(features) <- c("id", "feature")
-  return(features)  
+  features %>% separate(feature, c("signal","operation", "params"), "-", fill = "right", remove = FALSE)
+  # return(features)  
 }
 
-getTestData <- function() {
-  textXtests <- read.table(testXFilePath)
-  colnames(textXtests) <- getFeatures()[,2]
+
+#' Get a data frame with a complete set of training data with proper column names
+#' @param features feature data 
+#' @param activities activity data 
+#' @return data frame with a complete set of training data with proper column names
+#'
+getTrainingData <- function(features, activities) {
+  # Get Main Data:
+  trainingMeasures <- read.table(trainXFilePath, col.names = features[,2])
+
+  # Get Activity Data:
+  trainingActivitiesRaw <- read.table(trainYFilePath, col.names =  c("activity_id"))
+  # Join adding activity decription
+  trainingActivities <- right_join(trainingActivitiesRaw,activities, by = "activity_id")
   
-  testYdata <- read.table(testYFilePath)
-  colnames(testYdata) <- c("id")
-  
-  data.frame(c(right_join(testYdata,getActivities(), by = "id"),textXtests),stringsAsFactors=FALSE)
+  # Add in the subject Id rows:
+  trainingSubjectData <- read.table(trainSubjectFilePath, col.names = c("subject_id"))
+
+  #finally join all three sets of columns and return the result
+  cbind(trainingSubjectData, trainingActivities, trainingMeasures)
 }
 
-getTrainingData <- function() {
-  trainXtable <- read.table(trainXFilePath)
-  colnames(trainXtable) <- getFeatures()[,2]
+
+#' Get a data frame with a complete set of test data with proper column names
+#' @param features feature data 
+#' @param activities activity data 
+#' @return data frame with a complete set of test data with proper column names
+#'
+getTestData <- function(features, activities) {
+  # Get Main Data:
+  testMeasures <- read.table(testXFilePath, col.names = features[,2])
+
+  # Get Activity Data:
+  testActivitiesRaw <- read.table(testYFilePath, col.names =  c("activity_id"))
+  # Join adding activity decription
+  testActivities <- right_join(testActivitiesRaw,activities, by = "activity_id")
   
-  trainYdata <- read.table(trainYFilePath)
-  colnames(trainYdata) <- c("id")
-  
-  data.frame(c(right_join(trainYdata,getActivities(), by = "id"),trainXtable),stringsAsFactors=FALSE)
+  # Add in the subject Id rows:
+  testSubjectData <- read.table(testSubjectFilePath, col.names = c("subject_id"))
+
+  #finally combine  all three sets of columns, join in activity name and return the result
+  cbind(testSubjectData, testActivities, testMeasures)
 }
 
-allData <- rbind.data.frame(getTestData(),getTrainingData(),stringsAsFactors = FALSE)
+# MAIN CODE:
+
+# Get features and activites once and pass as parameters
+features <- getFeatures(featureFilePath)
+activities <- getActivityLabels(activtyLabelFilePath)
+
+# Get complete set of training and test data and concatinate into one unified list:
+allData <- rbind(getTrainingData(features, activities), getTestData(features, activities))
