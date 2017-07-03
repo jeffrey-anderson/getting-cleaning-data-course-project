@@ -95,6 +95,6 @@ activities <- getActivityLabels(activtyLabelFilePath)
 allData <- rbind(getTrainingData(features, activities), getTestData(features, activities))
 
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement.
-meanStdData <- allData[,grepl('-(mean\\(\\)|std\\(\\))-',colnames(allData),ignore.case = TRUE)]
+meanStdData <- allData[,grepl('subject_id|activity_id|activity|-(mean\\(\\)|std\\(\\))-',colnames(allData),ignore.case = TRUE)]
 
 
