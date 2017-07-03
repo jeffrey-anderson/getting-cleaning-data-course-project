@@ -43,7 +43,8 @@ getFeatures <- function(featureFile) {
 #'
 getTrainingData <- function(features, activities) {
   # Get Main Data:
-  trainingMeasures <- read.table(trainXFilePath, col.names = features[,2])
+  trainingMeasures <- read.table(trainXFilePath)
+  colnames(trainingMeasures) <- features[,2]
 
   # Get Activity Data:
   trainingActivitiesRaw <- read.table(trainYFilePath, col.names =  c("activity_id"))
@@ -65,8 +66,9 @@ getTrainingData <- function(features, activities) {
 #'
 getTestData <- function(features, activities) {
   # Get Main Data:
-  testMeasures <- read.table(testXFilePath, col.names = features[,2])
-
+  testMeasures <- read.table(testXFilePath)
+  colnames(testMeasures) <- features[,2]
+  
   # Get Activity Data:
   testActivitiesRaw <- read.table(testYFilePath, col.names =  c("activity_id"))
   # Join adding activity decription
@@ -93,6 +95,6 @@ activities <- getActivityLabels(activtyLabelFilePath)
 allData <- rbind(getTrainingData(features, activities), getTestData(features, activities))
 
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement.
-meanStdData <- allData[,grepl('\\.(mean|std)\\.',colnames(allData),ignore.case = TRUE)]
+meanStdData <- allData[,grepl('-(mean\\(\\)|std\\(\\))-',colnames(allData),ignore.case = TRUE)]
 
 
