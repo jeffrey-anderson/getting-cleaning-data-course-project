@@ -1,16 +1,18 @@
 library(dplyr)
 library(tidyr)
+library(reshape2)
 
 # File Paths
-activtyLabelFilePath <- "~/data/UCI HAR Dataset/activity_labels.txt"
-featureFilePath <- "~/data/UCI HAR Dataset/features.txt"
-testXFilePath <- "~/data/UCI HAR Dataset/test/X_test.txt"
-testYFilePath <- "~/data/UCI HAR Dataset/test/Y_test.txt"
-testSubjectFilePath <- "~/data/UCI HAR Dataset/test/subject_test.txt"
+dataRootDir <- file.path("~","data","UCI HAR Dataset")
+activtyLabelFilePath <- file.path(dataRootDir, "activity_labels.txt")
+featureFilePath <- file.path(dataRootDir, "features.txt")
+testXFilePath <- file.path(dataRootDir, "test", "X_test.txt")
+testYFilePath <- file.path(dataRootDir, "test", "Y_test.txt")
+testSubjectFilePath <- file.path(dataRootDir, "test", "subject_test.txt")
 
-trainXFilePath <- "~/data/UCI HAR Dataset/train/X_train.txt"
-trainYFilePath <- "~/data/UCI HAR Dataset/train/Y_train.txt"
-trainSubjectFilePath <- "~/data/UCI HAR Dataset/train/subject_train.txt"
+trainXFilePath <- file.path(dataRootDir, "train", "X_train.txt")
+trainYFilePath <- file.path(dataRootDir, "train", "Y_train.txt")
+trainSubjectFilePath <- file.path(dataRootDir, "train", "subject_train.txt")
 
 
 #' Get a data frame with activities
@@ -29,10 +31,7 @@ getActivityLabels <- function(activityLabelFile) {
 #' @return A data framehelp  representation of the \code{featureFile} with two columns: \code{activity_id} and \code{activity}
 #'
 getFeatures <- function(featureFile) {
-  features <- read.csv(featureFile,header = FALSE, sep = " ", stringsAsFactors = FALSE)
-  colnames(features) <- c("id", "feature")
-  features %>% separate(feature, c("signal","operation", "params"), "-", fill = "right", remove = FALSE)
-  # return(features)  
+  read.csv(featureFile,header = FALSE, sep = " ", stringsAsFactors = FALSE, col.names = c("id", "feature"))
 }
 
 
@@ -94,7 +93,12 @@ activities <- getActivityLabels(activtyLabelFilePath)
 
 allData <- rbind(getTrainingData(features, activities), getTestData(features, activities))
 
-# 2. Extracts only the measurements on the mean and standard deviation for each measurement.
-meanStdData <- allData[,grepl('subject_id|activity_id|activity|-(mean\\(\\)|std\\(\\))-',colnames(allData),ignore.case = TRUE)]
+# 2. Extracts only the measurements on the -mean() and -std() standard deviation for each measurement.
+meanStdData <- allData[,grepl('subject_id|activity|-(mean\\(\\)|std\\(\\))',colnames(allData),ignore.case = TRUE)]
 
-
+# 5. From the data set in step 4, creates a second, independent tidy data set with the average of each 
+#    variable for each activity and each subject.
+acvMelt <- melt(meanStdData, id=c("subject_id","activity"), 
+                measure.vars = colnames(meanStdData[1,grepl('-(mean\\(\\)|std\\(\\))',
+                                                            colnames(meanStdData),ignore.case = TRUE)])) 
+tidyData <- acvMelt %>% separate(variable, c("signal","calculation", "axis"), fill="right", "-") %>% group_by(subject_id,activity,signal,calculation,axis) %>% summarise(mean = mean(value)) 
