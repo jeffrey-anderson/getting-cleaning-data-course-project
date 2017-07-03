@@ -15,7 +15,7 @@ trainSubjectFilePath <- "~/data/UCI HAR Dataset/train/subject_train.txt"
 
 #' Get a data frame with activities
 #' @param activityLabelFile the path to the activity labels 
-#' @return A data fram representation of the \code{activityLabelFile} with two columns: \code{activity_id} and \code{activity}
+#' @return A data frame representation of the \code{activityLabelFile} with two columns: \code{activity_id} and \code{activity}
 #'
 getActivityLabels <- function(activityLabelFile) {
   activities <- read.csv(activityLabelFile,header = FALSE, sep = " ")
@@ -26,7 +26,7 @@ getActivityLabels <- function(activityLabelFile) {
 
 #' Get a data frame with features
 #' @param featureFile the path to the list of features 
-#' @return A data fram representation of the \code{featureFile} with two columns: \code{activity_id} and \code{activity}
+#' @return A data framehelp  representation of the \code{featureFile} with two columns: \code{activity_id} and \code{activity}
 #'
 getFeatures <- function(featureFile) {
   features <- read.csv(featureFile,header = FALSE, sep = " ", stringsAsFactors = FALSE)
@@ -86,4 +86,13 @@ features <- getFeatures(featureFilePath)
 activities <- getActivityLabels(activtyLabelFilePath)
 
 # Get complete set of training and test data and concatinate into one unified list:
+# 1. Merges the training and the test sets to create one data set.
+# 3. Uses descriptive activity names to name the activities in the data set
+# 4. Appropriately labels the data set with descriptive variable names.
+
 allData <- rbind(getTrainingData(features, activities), getTestData(features, activities))
+
+# 2. Extracts only the measurements on the mean and standard deviation for each measurement.
+meanStdData <- allData[,grepl('\\.(mean|std)\\.',colnames(allData),ignore.case = TRUE)]
+
+
