@@ -101,4 +101,4 @@ meanStdData <- allData[,grepl('subject_id|activity|-(mean\\(\\)|std\\(\\))',coln
 acvMelt <- melt(meanStdData, id=c("subject_id","activity"), 
                 measure.vars = colnames(meanStdData[1,grepl('-(mean\\(\\)|std\\(\\))',
                                                             colnames(meanStdData),ignore.case = TRUE)])) 
-tidyData <- acvMelt %>% separate(variable, c("signal","calculation", "axis"), fill="right", "-") %>% group_by(subject_id,activity,signal,calculation,axis) %>% summarise(mean = mean(value)) 
+tidyData <- acvMelt %>% group_by(subject_id,activity,variable) %>% summarise(mean = mean(value)) 
