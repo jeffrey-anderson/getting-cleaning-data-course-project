@@ -105,6 +105,6 @@ acvMelt <- melt(meanStdData, id=c("subject_id","activity"),
                 measure.vars = colnames(meanStdData[1,grepl('-(mean\\(\\)|std\\(\\))',
                                                             colnames(meanStdData),ignore.case = TRUE)])) 
 tidyData <- acvMelt %>% group_by(subject_id,activity,variable) %>% summarise(mean = mean(value)) 
-colnames(tidyData)[3] <- "Signal-Calculation-Axis"
+colnames(tidyData)[3] <- "feature"
 # Write the tidy data to an output file:
 write.table(tidyData, outputDataFilePath, row.names = FALSE)
