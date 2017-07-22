@@ -86,7 +86,8 @@ getTestData <- function(features, activities) {
 features <- getFeatures(featureFilePath)
 activities <- getActivityLabels(activtyLabelFilePath)
 
-# Get complete set of training and test data and concatinate into one unified list:
+# Get complete set of training and test data and concatinate into one unified list.
+# Per the instructions, this step does the following:
 # 1. Merges the training and the test sets to create one data set.
 # 3. Uses descriptive activity names to name the activities in the data set
 # 4. Appropriately labels the data set with descriptive variable names.
@@ -102,3 +103,4 @@ acvMelt <- melt(meanStdData, id=c("subject_id","activity"),
                 measure.vars = colnames(meanStdData[1,grepl('-(mean\\(\\)|std\\(\\))',
                                                             colnames(meanStdData),ignore.case = TRUE)])) 
 tidyData <- acvMelt %>% group_by(subject_id,activity,variable) %>% summarise(mean = mean(value)) 
+colnames(tidyData)[3] <- "Signal-Calculation-Axis"
