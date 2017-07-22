@@ -11,9 +11,9 @@ This project uses the [Human Activity Recognition Using Smartphones Dataset](dat
 | file  | Decription |
 | ------------- | ------------- |
 | [data/UCI HAR Dataset/test/X_test.txt](data/UCI%20HAR%20Dataset/test/X_test.txt) | Testing data measures |  
-| [data/UCI HAR Dataset/test/Y_test.txt](data/UCI%20HAR%20Dataset/test/Y_test.txt) | [Activity](data/UCI%20HAR%20Dataset/activity_labels.txt) ID for each row in the file above |  
+| [data/UCI HAR Dataset/test/y_test.txt](data/UCI%20HAR%20Dataset/test/y_test.txt) | [Activity](data/UCI%20HAR%20Dataset/activity_labels.txt) ID for each row in the file above |  
 | [data/UCI HAR Dataset/train/X_train.txt](data/UCI%20HAR%20Dataset/train/X_train.txt) | Training data measures |  
-| [data/UCI HAR Dataset/train/Y_train.txt](data/UCI%20HAR%20Dataset/train/Y_train.txt) | [Activity](data/UCI%20HAR%20Dataset/activity_labels.txt) ID for each row in the file above |  
+| [data/UCI HAR Dataset/train/y_train.txt](data/UCI%20HAR%20Dataset/train/y_train.txt) | [Activity](data/UCI%20HAR%20Dataset/activity_labels.txt) ID for each row in the file above |  
 
 ### Output Data
 
