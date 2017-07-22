@@ -3,7 +3,7 @@ library(tidyr)
 library(reshape2)
 
 # File Paths
-dataRootDir <- file.path("~","data","UCI HAR Dataset")
+dataRootDir <- file.path("data","UCI HAR Dataset")
 activtyLabelFilePath <- file.path(dataRootDir, "activity_labels.txt")
 featureFilePath <- file.path(dataRootDir, "features.txt")
 testXFilePath <- file.path(dataRootDir, "test", "X_test.txt")
@@ -13,6 +13,8 @@ testSubjectFilePath <- file.path(dataRootDir, "test", "subject_test.txt")
 trainXFilePath <- file.path(dataRootDir, "train", "X_train.txt")
 trainYFilePath <- file.path(dataRootDir, "train", "Y_train.txt")
 trainSubjectFilePath <- file.path(dataRootDir, "train", "subject_train.txt")
+
+outputDataFilePath <- file.path("data", "outputTidyData.txt")
 
 
 #' Get a data frame with activities
@@ -104,3 +106,5 @@ acvMelt <- melt(meanStdData, id=c("subject_id","activity"),
                                                             colnames(meanStdData),ignore.case = TRUE)])) 
 tidyData <- acvMelt %>% group_by(subject_id,activity,variable) %>% summarise(mean = mean(value)) 
 colnames(tidyData)[3] <- "Signal-Calculation-Axis"
+# Write the tidy data to an output file:
+write.table(tidyData, outputDataFilePath, row.names = FALSE)

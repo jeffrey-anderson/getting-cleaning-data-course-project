@@ -5,7 +5,7 @@
 Summarizing from the [class project instructions](https://www.coursera.org/learn/data-cleaning/peer/FIZtT/getting-and-cleaning-data-course-project), 
 data used in this project represents data collected from the accelerometers from the Samsung Galaxy S smartphone. Click [here](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones) for a full description from the site where the data was obtained. 
 
-This project converts the [raw data](https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip) into a [tidy dataset](http://vita.had.co.nz/papers/tidy-data.pdf) contents of which are described in the [code book](./CodeBook.md), using a recipe encoded into **run_analysis.R** that does the following:
+This project converts the [raw data](https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip) into a [tidy dataset](http://vita.had.co.nz/papers/tidy-data.pdf), contents of which are described in the [code book](./CodeBook.md), using a recipe encoded into **run_analysis.R** that does the following:
 
 1. Merges the training and the test sets to create one data set.
 2. Extracts only the measurements on the mean and standard deviation for each measurement.
@@ -16,8 +16,8 @@ This project converts the [raw data](https://d396qusza40orc.cloudfront.net/getda
 ## Using this project
 
 ### Prerequisites:
-* R programming language installed
-* dplyr, reshape2 and tidyr R packages installed
+* The R programming language is installed
+* The dplyr, reshape2 and tidyr R packages are installed
 
 ### Running the script
 
@@ -26,6 +26,12 @@ This project converts the [raw data](https://d396qusza40orc.cloudfront.net/getda
 3. use the `source()` command to source `run_analysis.R`
 
 ## Viewing the tidy output dataset
+
+Once the script runs, you can see the output data by issuing the following command in the console:
+
+``View(tidyData)``
+
+Alternatley, navigate to the `data` directory and open `outputTidyData.txt`
 
 More information about the data is available in the [code book](./CodeBook.md).
 
